@@ -6,6 +6,7 @@ let checkSpell = true;
 // Initialize state as soon as the service worker starts
 async function initializeState() {
     try {
+        console.log('Initializing state');
         const result = await chrome.storage.local.get(['active', 'method', 'checkSpell']);
         active = result.active ?? true;
         method = result.method ?? 0;
@@ -35,6 +36,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 // Handle state changes
 async function handleStateChange(request, sendResponse) {
     try {
+        console.log('Handling state change:', request);
         // Update state
         if (request.active !== undefined) active = request.active;
         if (request.method !== undefined) method = request.method;
@@ -77,6 +79,7 @@ async function handleStateChange(request, sendResponse) {
 // Update extension icon based on state
 async function updateIcon() {
     try {
+        console.log('Updating icon to:', active ? 'active' : 'disabled');
         await chrome.action.setIcon({
             path: {
                 "16": active ? "icons/icon16.png" : "icons/icon16_disabled.png",
