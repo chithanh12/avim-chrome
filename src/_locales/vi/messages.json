@@ -1,15 +1,15 @@
 {
 	"extName" : {
-		"message" : "AVIM - Bộ Gõ Tiếng Việt",
-		"description" : "Extension name"
+		"message" : "AVIM - Bộ gõ tiếng Việt",
+		"description" : "Tên tiện ích"
 	},
 	"extDescription" : {
-		"message" : "Bộ gõ tiếng Việt dành cho Chrome, hoạt động tốt trên hầu hết các trang web hiện có.",
-		"description" : "Extension description"
+		"message" : "Bộ gõ tiếng Việt hiện đại cho Chrome, hỗ trợ kiểu gõ Telex và VNI. Dựa trên AVIM gốc của Trần Đăng Hiếu với cải tiến về giao diện và độ ổn định.",
+		"description" : "Mô tả tiện ích"
 	},
 	"extAction" : {
-		"message" : "Đổi kiểu gõ AVIM",
-		"description" : "Default title of browser action"
+		"message" : "Cài đặt AVIM",
+		"description" : "Chú thích khi di chuột qua biểu tượng"
 	},
 	"extPopupSel" : {
 		"message" : "Chọn một kiểu gõ:",
