@@ -4,12 +4,12 @@
 		"description" : "Extension name"
 	},
 	"extDescription" : {
-		"message" : "An input method editor (IME) for Vietnamese, best choice for Chrome.",
+		"message" : "A modern Vietnamese Input Method for Chrome, supporting Telex and VNI input methods. Based on the original AVIM by Hieu Tran Dang with improvements in UI/UX and stability.",
 		"description" : "Extension description"
 	},
 	"extAction" : {
-		"message" : "Options for AVIM",
-		"description" : "Default title of browser action"
+		"message" : "AVIM Settings",
+		"description" : "Extension action tooltip"
 	},
 	"extPopupSel" : {
 		"message" : "Select an options:",

@@ -1,27 +1,31 @@
 /*
- *  AVIM for Chrome based on avim.js by Hieu Tran Dang
+ * AVIM - Advanced Vietnamese Input Method for Chrome
  * 
- *	Copyright (C) 2011-2015 Nguyen Kim Kha <nkimkha (at) gmail (dot) com>
+ * Original AVIM JavaScript (2004-2008):
+ * Copyright (C) 2004-2008 Hieu Tran Dang <lt2hieu2004 (at) users (dot) sf (dot) net>
+ * Website: http://noname00.com/hieu
+ *
+ * First Chrome Extension Port (2011-2015):
+ * Copyright (C) 2011-2015 Nguyen Kim Kha <nkimkha (at) gmail (dot) com>
  * 
- * My changes is published by GPLv3.
- *
- * Changes:
- * 	- Make it work inside Chrome Extension
- * 	- Remove unused codes for other browsers (Firefox, IE,...)
- * 	- Add API for setting from popup.html
- *  - Refactor
- */
-
-/*
- *  AVIM JavaScript Vietnamese Input Method Source File dated 28-07-2008
- *
- *	Copyright (C) 2004-2008 Hieu Tran Dang <lt2hieu2004 (at) users (dot) sf (dot) net>
- *	Website:	http://noname00.com/hieu
- *
- *	You are allowed to use this software in any way you want providing:
- *		1. You must retain this copyright notice at all time
- *		2. You must not claim that you or any other third party is the author
- *		   of this software in any way.
+ * Modern Chrome Extension (2024):
+ * Copyright (C) 2024 Nguyen Thanh <thanhnguyen2187 (at) gmail (dot) com>
+ * Website: https://github.com/thanhnguyen2187/avim-chrome
+ * 
+ * Changes in Modern Version:
+ * - Updated to Manifest V3 compatibility
+ * - Improved state management and icon feedback
+ * - Enhanced stability across modern websites
+ * - Removed deprecated features (VIQR support)
+ * - Cleaner codebase with better error handling
+ * - Modern UI/UX improvements
+ * 
+ * License:
+ * This software is licensed under the same terms as the original AVIM.
+ * You are allowed to use this software in any way you want providing:
+ * 1. You must retain this copyright notice at all time
+ * 2. You must not claim that you or any other third party is the author
+ *    of this software in any way.
  */
 
 var AVIMObj = '';

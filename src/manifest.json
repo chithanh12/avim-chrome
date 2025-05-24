@@ -3,6 +3,8 @@
   "version": "0.9.0",
   "manifest_version": 3,
   "description": "__MSG_extDescription__",
+  "author": "Nguyen Thanh (thanhnguyen2187@gmail.com)",
+  "homepage_url": "https://github.com/thanhnguyen2187/avim-chrome",
   "icons": { 
     "16": "/icons/icon16.png",
     "48": "/icons/icon48.png",
