@@ -1,53 +1,46 @@
 // Service Worker for AVIM Chrome Extension
-let active = true;
-let method = 0;
-let checkSpell = true;
+let state = {
+    active: true,
+    method: 0,
+    checkSpell: true
+};
 
 // Initialize state as soon as the service worker starts
 async function initializeState() {
     try {
-        console.log('Initializing state');
-        const result = await chrome.storage.local.get(['active', 'method', 'checkSpell']);
-        active = result.active ?? true;
-        method = result.method ?? 0;
-        checkSpell = result.checkSpell ?? true;
+        const result = await chrome.storage.local.get(['avimState']);
+        if (result.avimState) {
+            state = result.avimState;
+        }
         await updateIcon();
     } catch (e) {
-        console.warn('Error initializing state:', e);
+        // Silent fail
     }
 }
 
 // Listen for messages from content scripts and popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.type === 'getState') {
-        // Immediately respond with current state
-        sendResponse({
-            active: active,
-            method: method,
-            checkSpell: checkSpell
-        });
-        return true; // Keep the message channel open for the async response
+        sendResponse(state);
+        return true;
     } else if (request.type === 'setState') {
         handleStateChange(request, sendResponse);
-        return true; // Keep the message channel open for the async response
+        return true;
     }
 });
 
 // Handle state changes
 async function handleStateChange(request, sendResponse) {
     try {
-        console.log('Handling state change:', request);
         // Update state
-        if (request.active !== undefined) active = request.active;
-        if (request.method !== undefined) method = request.method;
-        if (request.checkSpell !== undefined) checkSpell = request.checkSpell;
+        const newState = { ...state };
+        if (request.active !== undefined) newState.active = request.active;
+        if (request.method !== undefined) newState.method = request.method;
+        if (request.checkSpell !== undefined) newState.checkSpell = request.checkSpell;
         
         // Save to storage
-        await chrome.storage.local.set({
-            active: active,
-            method: method,
-            checkSpell: checkSpell
-        });
+        await chrome.storage.local.set({ avimState: newState });
+        state = newState;
 
         // Update icon
         await updateIcon();
@@ -58,38 +51,36 @@ async function handleStateChange(request, sendResponse) {
             try {
                 await chrome.tabs.sendMessage(tab.id, {
                     type: 'stateChanged',
-                    active: active,
-                    method: method,
-                    checkSpell: checkSpell
+                    ...state
                 });
             } catch (e) {
-                // Ignore errors for tabs that don't have the content script
-                console.debug('Could not send message to tab:', tab.id);
+                // Silent fail for tabs that don't have our content script
             }
         }));
 
-        // Send success response
-        sendResponse({ success: true });
+        sendResponse(state);
     } catch (e) {
-        console.error('Error handling state change:', e);
-        sendResponse({ success: false, error: e.message });
+        sendResponse({ error: e.message });
     }
 }
 
 // Update extension icon based on state
 async function updateIcon() {
     try {
-        console.log('Updating icon to:', active ? 'active' : 'disabled');
-        await chrome.action.setIcon({
-            path: {
-                "16": active ? "icons/icon16.png" : "icons/icon16_disabled.png",
-                "19": active ? "icons/icon19.png" : "icons/icon19_disabled.png",
-                "48": active ? "icons/icon48.png" : "icons/icon48_disabled.png",
-                "128": active ? "icons/icon128.png" : "icons/icon128_disabled.png"
-            }
-        });
+        const iconPath = state.active ? {
+            "16": "/icons/icon16.png",
+            "19": "/icons/icon19.png",
+            "48": "/icons/icon48.png",
+            "128": "/icons/icon128.png"
+        } : {
+            "16": "/icons/icon16_disabled.png",
+            "19": "/icons/icon19_disabled.png",
+            "48": "/icons/icon48_disabled.png",
+            "128": "/icons/icon128_disabled.png"
+        };
+        await chrome.action.setIcon({ path: iconPath });
     } catch (e) {
-        console.warn('Could not update icon:', e);
+        // Silent fail
     }
 }
 

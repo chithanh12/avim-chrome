@@ -54,8 +54,14 @@ function scripts() {
 		.pipe(babel({
 			presets: ['@babel/preset-env']
 		}))
-		.pipe(stripDebug())
-		.pipe(terser())
+		.pipe(stripDebug())  // Strip console.log and debugger statements
+		.pipe(terser({
+			compress: {
+				drop_console: true,  // Remove console.* statements
+				drop_debugger: true  // Remove debugger statements
+			},
+			mangle: true
+		}))
 		.pipe(dest('build/scripts'));
 }
 
