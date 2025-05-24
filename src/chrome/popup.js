@@ -27,9 +27,12 @@ function getI18n(message) {
 }
 
 function loadText() {
-	const keys = ["Sel", "Auto", "Telex", "Vni", "Viqr", "ViqrStar", "Off", "Tips", "TipsCtrl", "Demo", "DemoCopy"];
+	const keys = ["Sel", "Auto", "Telex", "Vni", "Off", "Tips", "TipsCtrl", "Demo", "DemoCopy"];
 	for (const key of keys) {
-		$g("txt" + key).innerHTML = chrome.i18n.getMessage("extPopup" + key);
+		const element = $g("txt" + key);
+		if (element) {
+			element.innerHTML = chrome.i18n.getMessage("extPopup" + key);
+		}
 	}
 }
 
@@ -50,8 +53,6 @@ async function init() {
 	const autoEle = $g("auto");
 	const telexEle = $g("telex");
 	const vniEle = $g("vni");
-	const viqrEle = $g("viqr");
-	const viqrStarEle = $g("viqrStar");
 
 	// Get current state
 	const state = await chrome.runtime.sendMessage({ type: 'getState' });
@@ -69,12 +70,6 @@ async function init() {
 			case 2:
 				vniEle.checked = true;
 				break;
-			case 3:
-				viqrEle.checked = true;
-				break;
-			case 4:
-				viqrStarEle.checked = true;
-				break;
 		}
 	}
 
@@ -83,8 +78,6 @@ async function init() {
 	autoEle.addEventListener("click", () => setAVIMConfig('method', 0));
 	telexEle.addEventListener("click", () => setAVIMConfig('method', 1));
 	vniEle.addEventListener("click", () => setAVIMConfig('method', 2));
-	viqrEle.addEventListener("click", () => setAVIMConfig('method', 3));
-	viqrStarEle.addEventListener("click", () => setAVIMConfig('method', 4));
 
 	$g("demoCopy").addEventListener("click", highlightDemo);
 }
