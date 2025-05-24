@@ -41,18 +41,16 @@ function findIgnore(el) {
 }
 
 function initAVIM() {
-	if (typeof AVIMObj != "undefined" && AVIMObj) {
-		removeOldAVIM();
-	}
-	
-	if (!active) return;
+	// Always remove old handlers first
+	removeOldAVIM();
 
+	// Always create AVIM object with current state
 	AVIMObj = new AVIM();
 	AVIMObj.method = method;
 	AVIMObj.onOff = active ? 1 : 0;
 	AVIMObj.ckSpell = checkSpell ? 1 : 0;
 	
-	// Initialize AVIM for main document
+	// Always attach handlers - they will check active state when used
 	attachInputHandlers(document);
 	
 	// Initialize AVIM for all iframes
@@ -100,9 +98,13 @@ function handleKeyUp(e) {
 		const now = Date.now();
 		if (isPressCtrl && (now - lastCtrlPress) < 300) {
 			// Double Ctrl press detected
+			const newActive = !active;
 			chrome.runtime.sendMessage({ 
 				type: 'setState',
-				active: !active
+				active: newActive
+			}).then(() => {
+				active = newActive; // Update local state after successful message
+				AVIMObj.onOff = active ? 1 : 0; // Update AVIM object state directly
 			}).catch(console.warn);
 			isPressCtrl = false;
 		} else {

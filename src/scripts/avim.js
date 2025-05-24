@@ -9,8 +9,8 @@
  * Copyright (C) 2011-2015 Nguyen Kim Kha <nkimkha (at) gmail (dot) com>
  * 
  * Modern Chrome Extension (2024):
- * Copyright (C) 2024 Nguyen Thanh <thanhnguyen2187 (at) gmail (dot) com>
- * Website: https://github.com/thanhnguyen2187/avim-chrome
+ * Copyright (C) 2024 Nguyen Thanh <thanhnguyen12 (at) gmail (dot) com>
+ * Website: https://github.com/thanhnguyen12/avim-chrome
  * 
  * Changes in Modern Version:
  * - Updated to Manifest V3 compatibility
