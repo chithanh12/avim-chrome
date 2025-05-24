@@ -34,7 +34,7 @@ To build the extension locally:
 1. Clone the repository
 
 ```bash
-git clone https://github.com/thanhnguyen2187/avim-chrome.git
+git clone https://github.com/thanhnguyen12/avim-chrome.git
 cd avim-chrome
 ```
 
@@ -55,7 +55,7 @@ The built extension will be in the `build` directory.
 ## Credits
 
 - Original AVIM by Hieu Tran Dang
-- Modern improvements by Nguyen Thanh (thanhnguyen2187@gmail.com)
+- Modern improvements by Nguyen Thanh (thanhnguyen12@gmail.com)
 
 ## License
 
