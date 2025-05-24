@@ -2,113 +2,120 @@
 
 //npm install gulp gulp-minify-css gulp-uglify gulp-clean gulp-cleanhtml gulp-jshint gulp-strip-debug gulp-zip --save-dev
 
-var gulp = require('gulp'),
-	del = require('del'),
-	cleanhtml = require('gulp-cleanhtml'),
-	// minifycss = require('gulp-minify-css'),
-	jshint = require('gulp-jshint'),
-	stripdebug = require('gulp-strip-debug'),
-	uglify = require('gulp-uglify'),
-	concat = require('gulp-concat-util'),
-	jasmine = require('gulp-jasmine'),
-	jeditor = require("gulp-json-editor"),
-	zip = require('gulp-zip');
+const { src, dest, series, parallel, watch } = require('gulp');
+const del = require('del');
+const cleanhtml = require('gulp-cleanhtml');
+// minifycss = require('gulp-minify-css'),
+const jshint = require('gulp-jshint');
+const stripDebug = require('gulp-strip-debug').default;
+const uglify = require('gulp-uglify');
+const concat = require('gulp-concat');
+const jasmine = require('gulp-jasmine');
+const jeditor = require('gulp-json-editor');
+const zip = require('gulp-zip');
+const terser = require('gulp-terser');
+const babel = require('gulp-babel');
 
-//clean build directory
-gulp.task('clean', function(cb) {
-	return del(["build/*"], cb);
-});
+// Clean build directory
+function clean() {
+	return del(['build/**/*']);
+}
 
-//copy static folders to build directory
-gulp.task('copy', function() {
-	gulp.src('src/fonts/**')
-		.pipe(gulp.dest('build/fonts'));
-	gulp.src('src/icons/**')
-		.pipe(gulp.dest('build/icons'));
-	gulp.src('src/_locales/**')
-		.pipe(gulp.dest('build/_locales'));
-	return gulp.src('src/manifest.json')
-		.pipe(gulp.dest('build'));
-});
+// Copy static folders to build directory
+function assets() {
+	return src(['src/icons/**/*', 'src/_locales/**/*'], { base: 'src' })
+		.pipe(dest('build'));
+}
 
-//copy and compress HTML files
-gulp.task('html', function() {
-	return gulp.src('src/*.html')
+// Copy and compress HTML files
+function html() {
+	return src('src/*.html')
 		.pipe(cleanhtml())
-		.pipe(gulp.dest('build'));
-});
+		.pipe(dest('build'));
+}
 
-//run scripts through JSHint
-gulp.task('jshint', function() {
-	return gulp.src('src/scripts/*.js')
+// Run scripts through JSHint
+function jshintTask() {
+	return src('src/scripts/*.js')
 		.pipe(jshint())
 		.pipe(jshint.reporter('default'));
-});
+}
 
-//run test script with jasmine
-gulp.task('test', gulp.series('jshint'), function () {
-    return gulp.src(['test/avim.test.js'])
-        .pipe(jasmine());
-});
+// Run test script with jasmine
+function test() {
+	return src('test/*.js')
+		.pipe(jasmine());
+}
 
-//copy vendor scripts and uglify all other scripts, creating source maps
-gulp.task('scripts', gulp.series('test'), function() {
-	gulp.src('src/scripts/vendors/**/*.js')
-		.pipe(gulp.dest('build/scripts/vendors'));
+// Process all scripts
+function scripts() {
+	// Process main scripts
+	return src(['src/scripts/**/*.js', 'src/chrome/**/*.js'])
+		.pipe(babel({
+			presets: ['@babel/preset-env']
+		}))
+		.pipe(stripDebug())
+		.pipe(terser())
+		.pipe(dest('build/scripts'));
+}
 
-	gulp.src("src/manifest.json")
+// Process manifest
+function manifest() {
+	return src('src/manifest.json')
 		.pipe(jeditor(function(json) {
-			json.content_scripts[0].js = [ "scripts/avim.js" ];
+			// You can modify the manifest here if needed
 			return json;
 		}))
-		.pipe(gulp.dest('build'))
+		.pipe(dest('build'));
+}
 
-	var opt = {
-			outSourceMap: true,
-			mangle: {
-				"toplevel": true,
-				"eval": true,
-				"except": "chrome"
-			}
-		};
+// Minify styles
+function styles() {
+	// return gulp.src('src/styles/**/*.css')
+	// 	.pipe(minifycss({root: 'src/styles', keepSpecialComments: 0}))
+	// 	.pipe(gulp.dest('build/styles'));
+	return src('src/styles/**')
+		.pipe(dest('build/styles'));
+}
 
-	gulp.src(['src/chrome/**/*.js', '!src/chrome/vendors/**/*.js'])
-		.pipe(stripdebug())
-		.pipe(uglify(opt))
-		.pipe(gulp.dest('build/chrome'));
-
-	return gulp.src(['src/scripts/**/*.js', '!src/scripts/vendors/**/*.js'])
-		.pipe(concat('avim.js'))
-		.pipe(stripdebug())
-		.pipe(uglify(opt))
-		.pipe(gulp.dest('build/scripts'));
-});
-
-//minify styles
-gulp.task('styles', function() {
-// 	return gulp.src('src/styles/**/*.css')
-// 		.pipe(minifycss({root: 'src/styles', keepSpecialComments: 0}))
-// 		.pipe(gulp.dest('build/styles'));
-	return gulp.src('src/styles/**')
-		.pipe(gulp.dest('build/styles'));
-});
-
-//build ditributable and sourcemaps after other tasks completed
-gulp.task('zip', gulp.series('html', 'scripts', 'styles', 'copy'), function() {
-	var manifest = require('./src/manifest.json'),
-		distFileName = 'avim-chrome-' + manifest.version + '.zip',
-		mapFileName = 'avim-chrome-' + manifest.version + '-maps.zip';
-	//collect all source maps
-	gulp.src('build/scripts/**/*.map')
-		.pipe(zip(mapFileName))
-		.pipe(gulp.dest('dist'));
-	//build distributable extension
-	return gulp.src(['build/**', '!build/scripts/**/*.map'])
+// Package extension
+function packageExtension() {
+	const manifest = require('./src/manifest.json');
+	const distFileName = `avim-chrome-${manifest.version}.zip`;
+	return src('build/**/*')
 		.pipe(zip(distFileName))
-		.pipe(gulp.dest('dist'));
-});
+		.pipe(dest('dist'));
+}
 
-//run all tasks after build directory has been cleaned
-gulp.task('default', gulp.series('clean'), function() {
-	return gulp.start('zip');
-});
+// Watch files
+function watchFiles() {
+	watch('src/scripts/*.js', scripts);
+	watch('src/*.html', html);
+	watch('src/manifest.json', manifest);
+	watch(['src/icons/**/*', 'src/_locales/**/*'], assets);
+}
+
+// Define complex tasks
+const build = series(
+	clean,
+	parallel(
+		series(jshintTask, scripts),
+		html,
+		assets,
+		manifest,
+		styles
+	),
+	packageExtension
+);
+
+// Export tasks
+exports.clean = clean;
+exports.scripts = scripts;
+exports.html = html;
+exports.assets = assets;
+exports.manifest = manifest;
+exports.packageExtension = packageExtension;
+exports.watch = watchFiles;
+exports.test = test;
+exports.build = build;
+exports.default = build;

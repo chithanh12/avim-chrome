@@ -1,143 +1,94 @@
-(function(window){
-	var localStorage = window.localStorage;
+// Service Worker for AVIM Chrome Extension
+let active = true;
+let method = 0;
+let checkSpell = true;
 
-	function setLocalStorageItem(key, value) {
-	  if (localStorage)
-		localStorage[key] = value;
-	}
+// Initialize state as soon as the service worker starts
+async function initializeState() {
+    try {
+        const result = await chrome.storage.local.get(['active', 'method', 'checkSpell']);
+        active = result.active ?? true;
+        method = result.method ?? 0;
+        checkSpell = result.checkSpell ?? true;
+        await updateIcon();
+    } catch (e) {
+        console.warn('Error initializing state:', e);
+    }
+}
 
-	function getLocalStorageItem(key) {
-	  if (localStorage)
-		return localStorage.getItem(key);
+// Listen for messages from content scripts and popup
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.type === 'getState') {
+        // Immediately respond with current state
+        sendResponse({
+            active: active,
+            method: method,
+            checkSpell: checkSpell
+        });
+        return true; // Keep the message channel open for the async response
+    } else if (request.type === 'setState') {
+        handleStateChange(request, sendResponse);
+        return true; // Keep the message channel open for the async response
+    }
+});
 
-	  return ;
-	}
+// Handle state changes
+async function handleStateChange(request, sendResponse) {
+    try {
+        // Update state
+        if (request.active !== undefined) active = request.active;
+        if (request.method !== undefined) method = request.method;
+        if (request.checkSpell !== undefined) checkSpell = request.checkSpell;
+        
+        // Save to storage
+        await chrome.storage.local.set({
+            active: active,
+            method: method,
+            checkSpell: checkSpell
+        });
 
-	function getPrefs(callback) {
-		if (!getLocalStorageItem('method')) {
-			init();
-		}
-		var prefs = {
-			'method': parseInt(getLocalStorageItem('method')),
-			'onOff': parseInt(getLocalStorageItem('onOff')),
-			'ckSpell': parseInt(getLocalStorageItem('ckSpell')),
-			'oldAccent': parseInt(getLocalStorageItem('oldAccent'))
-		};
+        // Update icon
+        await updateIcon();
+        
+        // Notify all tabs
+        const tabs = await chrome.tabs.query({});
+        await Promise.all(tabs.map(async (tab) => {
+            try {
+                await chrome.tabs.sendMessage(tab.id, {
+                    type: 'stateChanged',
+                    active: active,
+                    method: method,
+                    checkSpell: checkSpell
+                });
+            } catch (e) {
+                // Ignore errors for tabs that don't have the content script
+                console.debug('Could not send message to tab:', tab.id);
+            }
+        }));
 
-		callback.call(this, prefs);
-	}
+        // Send success response
+        sendResponse({ success: true });
+    } catch (e) {
+        console.error('Error handling state change:', e);
+        sendResponse({ success: false, error: e.message });
+    }
+}
 
-	function turnAvim(callback) {
-		if (!getLocalStorageItem('method')) {
-			init();
-		}
+// Update extension icon based on state
+async function updateIcon() {
+    try {
+        await chrome.action.setIcon({
+            path: {
+                "16": active ? "icons/icon16.png" : "icons/icon16_disabled.png",
+                "19": active ? "icons/icon19.png" : "icons/icon19_disabled.png",
+                "48": active ? "icons/icon48.png" : "icons/icon48_disabled.png",
+                "128": active ? "icons/icon128.png" : "icons/icon128_disabled.png"
+            }
+        });
+    } catch (e) {
+        console.warn('Could not update icon:', e);
+    }
+}
 
-		var onOff = getLocalStorageItem('onOff');
-		setLocalStorageItem('onOff', onOff=='1'?'0':'1');
-
-		getPrefs(function(prefs){
-			updateAllTabs(prefs);
-			callback.call(this);
-		});
-	}
-
-	function updateAllTabs(prefs) {
-		chrome.tabs.query({}, function(tabs){
-			for (var i=0; i<tabs.length; i++) {
-				var tab = tabs[i];
-				chrome.tabs.sendMessage(tab.id, prefs);
-			}
-		});
-
-		updateIcon(prefs);
-	}
-
-	function updateIcon(prefs) {
-		var txt = {};
-		var bg = {};
-
-		if (prefs.onOff == 1) {
-			txt.text = "on";
-			bg.color = [0, 255, 0, 255];
-		} else {
-			txt.text = "off";
-			bg.color = [255, 0, 0, 255];
-		}
-
-		chrome.browserAction.setBadgeText(txt);
-		chrome.browserAction.setBadgeBackgroundColor(bg);
-	}
-
-	function savePrefs(request, callback) {
-		if (typeof request.method != 'undefined') {
-			setLocalStorageItem("method", request.method);
-		}
-		if (typeof request.onOff != 'undefined') {
-			setLocalStorageItem("onOff", request.onOff);
-		}
-		if (typeof request.ckSpell != 'undefined') {
-			setLocalStorageItem("ckSpell", request.ckSpell);
-		}
-		if (typeof request.oldAccent != 'undefined') {
-			setLocalStorageItem("oldAccent", request.oldAccent);
-		}
-
-		getPrefs(function(prefs){
-			updateAllTabs(prefs);
-			callback.call(this);
-		});
-	}
-
-	function processRequest(request, sender, sendResponse) {
-		if (request.get_prefs) {
-			getPrefs(sendResponse);
-			return;
-		}
-
-		if (request.save_prefs) {
-			savePrefs(request, sendResponse);
-			return;
-		}
-
-		if (request.turn_avim) {
-			turnAvim(sendResponse);
-			return;
-		}
-	}
-
-	function genericOnClick() {
-		alert("demo");
-	}
-
-	function createMenus() {
-		var parentId = chrome.contextMenus.create({"title" : "AVIM", "contexts" : ["selection"]});
-		var demo = chrome.contextMenus.create({"title" : "AVIM Demo", "contexts" : ["selection"], "parentId": parentId, "onclick": genericOnClick});
-	}
-
-	function init() {
-		if (!getLocalStorageItem('method')) {
-			setLocalStorageItem('method', '0');
-		}
-
-		if (!getLocalStorageItem('onOff')) {
-			setLocalStorageItem('onOff', '1');
-		}
-
-		if (!getLocalStorageItem('ckSpell')) {
-			setLocalStorageItem('ckSpell', '1');
-		}
-
-		if (!getLocalStorageItem('oldAccent')) {
-			setLocalStorageItem('oldAccent', '1');
-		}
-
-		getPrefs(updateIcon);
-
-		chrome.extension.onMessage.addListener(processRequest);
-
-		//createMenus();
-	}
-
-	init();
-
-})(window);
+// Initialize state when service worker starts
+initializeState();
