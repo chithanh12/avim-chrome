@@ -4,7 +4,7 @@
 
 const { src, dest, series, parallel, watch } = require('gulp');
 const del = require('del');
-const cleanhtml = require('gulp-cleanhtml');
+const htmlMinifier = require('gulp-html-minifier-terser');
 // minifycss = require('gulp-minify-css'),
 const jshint = require('gulp-jshint');
 const stripDebug = require('gulp-strip-debug').default;
@@ -15,6 +15,9 @@ const jeditor = require('gulp-json-editor');
 const zip = require('gulp-zip');
 const terser = require('gulp-terser');
 const babel = require('gulp-babel');
+const fs = require('fs');
+const path = require('path');
+const glob = require('glob');
 
 // Clean build directory
 function clean() {
@@ -23,14 +26,24 @@ function clean() {
 
 // Copy static folders to build directory
 function assets() {
-	return src(['src/icons/**/*', 'src/_locales/**/*'], { base: 'src' })
+	return src(['src/icons/**/*', 'src/_locales/**/*'], {
+		base: 'src',
+		buffer: true,  // Ensure files are buffered
+		allowEmpty: true
+	})
 		.pipe(dest('build'));
 }
 
 // Copy and compress HTML files
 function html() {
 	return src('src/*.html')
-		.pipe(cleanhtml())
+		.pipe(htmlMinifier({
+			collapseWhitespace: true,
+			removeComments: true,
+			minifyJS: true,
+			minifyCSS: true,
+			removeAttributeQuotes: true
+		}))
 		.pipe(dest('build'));
 }
 
@@ -68,7 +81,7 @@ function scripts() {
 // Process manifest
 function manifest() {
 	return src('src/manifest.json')
-		.pipe(jeditor(function(json) {
+		.pipe(jeditor(function (json) {
 			// You can modify the manifest here if needed
 			return json;
 		}))
@@ -93,6 +106,31 @@ function packageExtension() {
 		.pipe(dest('dist'));
 }
 
+// Copy icons separately using direct fs operations to preserve binary files
+function copyIcons(cb) {
+	// Ensure the build/icons directory exists
+	if (!fs.existsSync('build/icons')) {
+		fs.mkdirSync('build/icons', { recursive: true });
+	}
+
+	// Get all PNG files in src/icons
+	const iconFiles = glob.sync('src/icons/*.png');
+
+	// Copy each file
+	iconFiles.forEach(file => {
+		const fileName = path.basename(file);
+		fs.copyFileSync(file, `build/icons/${fileName}`);
+	});
+
+	cb();
+}
+
+// Copy locales and other assets
+function copyLocales() {
+	return src('src/_locales/**/*', { base: 'src' })
+		.pipe(dest('build'));
+}
+
 // Watch files
 function watchFiles() {
 	watch('src/scripts/*.js', scripts);
@@ -107,9 +145,9 @@ const build = series(
 	parallel(
 		series(jshintTask, scripts),
 		html,
-		assets,
-		manifest,
-		styles
+		copyIcons,
+		copyLocales,
+		manifest
 	),
 	packageExtension
 );
@@ -118,7 +156,8 @@ const build = series(
 exports.clean = clean;
 exports.scripts = scripts;
 exports.html = html;
-exports.assets = assets;
+exports.copyIcons = copyIcons;
+exports.copyLocales = copyLocales;
 exports.manifest = manifest;
 exports.packageExtension = packageExtension;
 exports.watch = watchFiles;

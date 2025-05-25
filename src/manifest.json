@@ -5,8 +5,9 @@
   "description": "__MSG_extDescription__",
   "author": "Nguyen Thanh (thanhnguyen2187@gmail.com)",
   "homepage_url": "https://github.com/thanhnguyen2187/avim-chrome",
-  "icons": { 
+  "icons": {
     "16": "/icons/icon16.png",
+    "19": "/icons/icon19.png",
     "48": "/icons/icon48.png",
     "128": "/icons/icon128.png"
   },
@@ -20,12 +21,21 @@
     "default_title": "__MSG_extAction__",
     "default_popup": "popup.html"
   },
-  "content_scripts": [{
-    "js": [ "scripts/avim.js", "scripts/extension.js" ],
-    "matches": ["http://*/*", "https://*/*", "file:///*"],
-    "run_at": "document_end",
-    "all_frames": true
-  }],
+  "content_scripts": [
+    {
+      "js": [
+        "scripts/avim.js",
+        "scripts/extension.js"
+      ],
+      "matches": [
+        "http://*/*",
+        "https://*/*",
+        "file:///*"
+      ],
+      "run_at": "document_end",
+      "all_frames": true
+    }
+  ],
   "default_locale": "en",
   "offline_enabled": true,
   "background": {
@@ -39,8 +49,15 @@
     "http://*/*",
     "https://*/*"
   ],
-  "web_accessible_resources": [{
-    "resources": ["scripts/*", "icons/*"],
-    "matches": ["<all_urls>"]
-  }]
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "scripts/*",
+        "icons/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
 }
