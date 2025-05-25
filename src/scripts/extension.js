@@ -40,6 +40,32 @@ function findIgnore(el) {
 	return false;
 }
 
+// Find the nearest editable parent element
+function findEditableParent(element) {
+    let current = element;
+    while (current && current !== document.body) {
+        if (current.isContentEditable || inputTypes.includes(current.type)) {
+            return current;
+        }
+        current = current.parentElement;
+    }
+    return null;
+}
+
+// Get the text content and cursor position from a contenteditable element
+function getContentEditableInfo(element, range) {
+    const node = range.startContainer;
+    const workingElement = node.nodeType === 3 ? node.parentNode : node;
+    
+    return {
+        element: workingElement,
+        node: node,
+        text: node.textContent,
+        offset: range.startOffset,
+        fullText: workingElement.textContent
+    };
+}
+
 function initAVIM() {
 	// Always remove old handlers first
 	removeOldAVIM();
@@ -125,48 +151,59 @@ function handleKeyPress(e) {
 		return;
 	}
 
-	if (target.isContentEditable || inputTypes.includes(target.type)) {
-		if (!findIgnore(target) && !target.readOnly) {
-			// Set current key
-			AVIMObj.sk = String.fromCharCode(e.which);
-			
-			// Save current position and text
-			if (target.isContentEditable) {
-				const selection = window.getSelection();
-				const range = selection.getRangeAt(0);
-				target.value = target.textContent;
-				target.pos = range.endOffset;
-			} else {
-				target.pos = target.selectionStart;
+	// Find the actual editable element (might be a parent of the target)
+	const editableElement = findEditableParent(target);
+	if (!editableElement || findIgnore(editableElement) || editableElement.readOnly) {
+		return;
+	}
+
+	// Set current key
+	AVIMObj.sk = String.fromCharCode(e.which);
+	
+	// Handle different types of editable elements
+	if (editableElement.isContentEditable) {
+		const selection = window.getSelection();
+		const range = selection.getRangeAt(0);
+		
+		// Get info about the current editable context
+		const editableInfo = getContentEditableInfo(editableElement, range);
+		
+		// Create a proxy object that mimics the interface AVIM expects
+		const processObj = {
+			value: editableInfo.text,
+			selectionStart: editableInfo.offset,
+			selectionEnd: editableInfo.offset,
+			setSelectionRange: function(start, end) {
+				this.selectionStart = start;
+				this.selectionEnd = end;
 			}
+		};
+		
+		// Process the keystroke
+		start(processObj, e);
+		
+		if (AVIMObj.changed) {
+			e.preventDefault();
+			AVIMObj.changed = false;
 			
-			// Process the keystroke
-			start(target, e);
-			
-			if (AVIMObj.changed) {
-				e.preventDefault();
-				AVIMObj.changed = false;
+			// Update the text node
+			if (editableInfo.node.nodeType === 3) {
+				editableInfo.node.textContent = processObj.value;
 				
-				// Update the text and cursor position
-				if (target.isContentEditable) {
-					const selection = window.getSelection();
-					const range = selection.getRangeAt(0);
-					const node = range.startContainer;
-					
-					if (node.nodeType === 3) { // Text node
-						node.textContent = target.value;
-						range.setStart(node, target.pos);
-						range.setEnd(node, target.pos);
-						selection.removeAllRanges();
-						selection.addRange(range);
-					}
-				} else {
-					const oldStart = target.selectionStart;
-					const oldEnd = target.selectionEnd;
-					target.value = target.value;
-					target.setSelectionRange(oldStart, oldEnd);
-				}
+				// Restore cursor position
+				range.setStart(editableInfo.node, processObj.selectionStart);
+				range.setEnd(editableInfo.node, processObj.selectionEnd);
+				selection.removeAllRanges();
+				selection.addRange(range);
 			}
+		}
+	} else {
+		// For normal input elements, just pass through to AVIM
+		start(editableElement, e);
+		
+		if (AVIMObj.changed) {
+			e.preventDefault();
+			AVIMObj.changed = false;
 		}
 	}
 }
