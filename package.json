@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/chithanh12/avim-chrome"
+    "url": "https://github.com/chithanh12/vnk-chrome"
   },
   "author": "Thanh Nguyen <chithanh12@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/chithanh12/avim-chrome/issues"
+    "url": "https://github.com/chithanh12/vnk-chrome/issues"
   },
-  "homepage": "https://github.com/chithanh12/avim-chrome",
+  "homepage": "https://github.com/chithanh12/vnk-chrome",
   "devDependencies": {
     "@babel/core": "^7.23.0",
     "@babel/preset-env": "^7.22.20",

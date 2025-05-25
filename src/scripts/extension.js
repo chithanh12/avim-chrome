@@ -1,4 +1,4 @@
-// AVIM Extension Content Script
+// VNK Extension Content Script
 let method = 0;
 let active = true;
 let checkSpell = true;

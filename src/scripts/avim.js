@@ -1,5 +1,5 @@
 /*
- * AVIM - Advanced Vietnamese Input Method for Chrome
+ * VNK - Advanced Vietnamese Input Method for Chrome
  * 
  * Original AVIM JavaScript (2004-2008):
  * Copyright (C) 2004-2008 Hieu Tran Dang <lt2hieu2004 (at) users (dot) sf (dot) net>
@@ -8,9 +8,9 @@
  * First Chrome Extension Port (2011-2015):
  * Copyright (C) 2011-2015 Nguyen Kim Kha <nkimkha (at) gmail (dot) com>
  * 
- * Modern Chrome Extension (2024):
- * Copyright (C) 2024 Nguyen Thanh <thanhnguyen12 (at) gmail (dot) com>
- * Website: https://github.com/thanhnguyen12/avim-chrome
+ * Modern Chrome Extension (2025):
+ * Copyright (C) 2025 Nguyen Thanh <thanhnguyen12 (at) gmail (dot) com>
+ * Website: https://github.com/thanhnguyen12/vnk-chrome
  * 
  * Changes in Modern Version:
  * - Updated to Manifest V3 compatibility
