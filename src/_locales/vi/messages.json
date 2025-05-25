@@ -1,58 +1,58 @@
 {
-	"extName" : {
-		"message" : "AVIM - Bộ gõ tiếng Việt",
-		"description" : "Tên tiện ích"
+	"extName": {
+		"message": "VNK - Bộ gõ tiếng Việt",
+		"description": "Tên tiện ích"
 	},
-	"extDescription" : {
-		"message" : "Bộ gõ tiếng Việt hiện đại cho Chrome, hỗ trợ kiểu gõ Telex và VNI. Dựa trên AVIM gốc của Trần Đăng Hiếu với cải tiến về giao diện và độ ổn định.",
-		"description" : "Mô tả tiện ích"
+	"extDescription": {
+		"message": "Bộ gõ tiếng Việt hiện đại cho Chrome, hỗ trợ kiểu gõ Telex và VNI. Dựa trên AVIM gốc của Trần Đăng Hiếu với cải tiến về giao diện và độ ổn định.",
+		"description": "Mô tả tiện ích"
 	},
-	"extAction" : {
-		"message" : "Cài đặt AVIM",
-		"description" : "Chú thích khi di chuột qua biểu tượng"
+	"extAction": {
+		"message": "Cài đặt VNK",
+		"description": "Chú thích khi di chuột qua biểu tượng"
 	},
-	"extPopupSel" : {
-		"message" : "Chọn một kiểu gõ:",
-		"description" : ""
+	"extPopupSel": {
+		"message": "Chọn một kiểu gõ:",
+		"description": ""
 	},
-	"extPopupAuto" : {
-		"message" : "Kết hợp TELEX và VNI",
-		"description" : ""
+	"extPopupAuto": {
+		"message": "Kết hợp TELEX và VNI",
+		"description": ""
 	},
-	"extPopupTelex" : {
-		"message" : "Kiểu TELEX",
-		"description" : ""
+	"extPopupTelex": {
+		"message": "Kiểu TELEX",
+		"description": ""
 	},
-	"extPopupVni" : {
-		"message" : "Kiểu VNI",
-		"description" : ""
+	"extPopupVni": {
+		"message": "Kiểu VNI",
+		"description": ""
 	},
-	"extPopupViqr" : {
-		"message" : "Kiểu VIQR",
-		"description" : ""
+	"extPopupViqr": {
+		"message": "Kiểu VIQR",
+		"description": ""
 	},
-	"extPopupViqrStar" : {
-		"message" : "Kiểu VIQR*",
-		"description" : ""
+	"extPopupViqrStar": {
+		"message": "Kiểu VIQR*",
+		"description": ""
 	},
-	"extPopupOff" : {
-		"message" : "Tắt AVIM",
-		"description" : ""
+	"extPopupOff": {
+		"message": "Tắt VNK",
+		"description": ""
 	},
-	"extPopupTips" : {
-		"message" : "Mẹo nhỏ:",
-		"description" : ""
+	"extPopupTips": {
+		"message": "Mẹo nhỏ:",
+		"description": ""
 	},
-	"extPopupTipsCtrl" : {
-		"message" : "Nhấn Ctrl 2 lần để bật/tắt nhanh.",
-		"description" : ""
+	"extPopupTipsCtrl": {
+		"message": "Nhấn Ctrl 2 lần để bật/tắt nhanh.",
+		"description": ""
 	},
-	"extPopupDemo" : {
-		"message" : "Gõ nhanh",
-		"description" : ""
+	"extPopupDemo": {
+		"message": "Gõ nhanh",
+		"description": ""
 	},
-	"extPopupDemoCopy" : {
-		"message" : "Bôi đen toàn bộ",
-		"description" : ""
+	"extPopupDemoCopy": {
+		"message": "Bôi đen toàn bộ",
+		"description": ""
 	}
 }

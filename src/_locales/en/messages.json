@@ -1,58 +1,58 @@
 {
-	"extName" : {
-		"message" : "AVIM - Vietnamese Input Method",
-		"description" : "Extension name"
+	"extName": {
+		"message": "VNK - Vietnamese Input Method",
+		"description": "Extension name"
 	},
-	"extDescription" : {
-		"message" : "A modern Vietnamese Input Method for Chrome, supporting Telex and VNI input methods. Based on the original AVIM by Hieu Tran Dang with improvements in UI/UX and stability.",
-		"description" : "Extension description"
+	"extDescription": {
+		"message": "A modern Vietnamese Input Method for Chrome, supporting Telex and VNI input methods. Based on the original AVIM by Hieu Tran Dang with improvements in UI/UX and stability.",
+		"description": "Extension description"
 	},
-	"extAction" : {
-		"message" : "AVIM Settings",
-		"description" : "Extension action tooltip"
+	"extAction": {
+		"message": "VNK Settings",
+		"description": "Extension action tooltip"
 	},
-	"extPopupSel" : {
-		"message" : "Select an options:",
-		"description" : ""
+	"extPopupSel": {
+		"message": "Select an options:",
+		"description": ""
 	},
-	"extPopupAuto" : {
-		"message" : "Both Telex and VNI",
-		"description" : ""
+	"extPopupAuto": {
+		"message": "Both Telex and VNI",
+		"description": ""
 	},
-	"extPopupTelex" : {
-		"message" : "Telex only",
-		"description" : ""
+	"extPopupTelex": {
+		"message": "Telex only",
+		"description": ""
 	},
-	"extPopupVni" : {
-		"message" : "VNI only",
-		"description" : ""
+	"extPopupVni": {
+		"message": "VNI only",
+		"description": ""
 	},
-	"extPopupViqr" : {
-		"message" : "VIQR only",
-		"description" : ""
+	"extPopupViqr": {
+		"message": "VIQR only",
+		"description": ""
 	},
-	"extPopupViqrStar" : {
-		"message" : "VIQR* only",
-		"description" : ""
+	"extPopupViqrStar": {
+		"message": "VIQR* only",
+		"description": ""
 	},
-	"extPopupOff" : {
-		"message" : "Turn off AVIM",
-		"description" : ""
+	"extPopupOff": {
+		"message": "Turn off VNK",
+		"description": ""
 	},
-	"extPopupTips" : {
-		"message" : "Small tips:",
-		"description" : ""
+	"extPopupTips": {
+		"message": "Small tips:",
+		"description": ""
 	},
-	"extPopupTipsCtrl" : {
-		"message" : "You can turn on/off AVIM by press Ctrl twice.",
-		"description" : ""
+	"extPopupTipsCtrl": {
+		"message": "You can turn on/off VNK by press Ctrl twice.",
+		"description": ""
 	},
-	"extPopupDemo" : {
-		"message" : "Fast input",
-		"description" : ""
+	"extPopupDemo": {
+		"message": "Fast input",
+		"description": ""
 	},
-	"extPopupDemoCopy" : {
-		"message" : "Highlight All",
-		"description" : ""
+	"extPopupDemoCopy": {
+		"message": "Highlight All",
+		"description": ""
 	}
 }
