@@ -1,6 +1,6 @@
 {
-  "name": "avim-chrome",
-  "version": "0.9.0",
+  "name": "vnk-chrome",
+  "version": "3.0.0",
   "description": "Vietnamese Input Method for Chrome - Modern Implementation",
   "scripts": {
     "build": "gulp build",
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/kimkha/avim-chrome"
+    "url": "https://github.com/chithanh12/avim-chrome"
   },
-  "author": "Nguyen Kim Kha <nkimkha@gmail.com>",
-  "license": "GPLv3",
+  "author": "Thanh Nguyen <chithanh12@gmail.com>",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kimkha/avim-chrome/issues"
+    "url": "https://github.com/chithanh12/avim-chrome/issues"
   },
-  "homepage": "https://github.com/kimkha/avim-chrome",
+  "homepage": "https://github.com/chithanh12/avim-chrome",
   "devDependencies": {
     "@babel/core": "^7.23.0",
     "@babel/preset-env": "^7.22.20",
