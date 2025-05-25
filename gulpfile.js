@@ -100,7 +100,7 @@ function styles() {
 // Package extension
 function packageExtension() {
 	const manifest = require('./src/manifest.json');
-	const distFileName = `avim-chrome-${manifest.version}.zip`;
+	const distFileName = `vnk-chrome-${manifest.version}.zip`;
 	return src('build/**/*')
 		.pipe(zip(distFileName))
 		.pipe(dest('dist'));
