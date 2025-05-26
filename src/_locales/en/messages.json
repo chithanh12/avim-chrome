@@ -4,7 +4,7 @@
 		"description": "Extension name"
 	},
 	"extDescription": {
-		"message": "A modern Vietnamese Input Method for Chrome, supporting Telex and VNI input methods. Based on the original AVIM by Hieu Tran Dang with improvements in UI/UX and stability.",
+		"message": "A modern Vietnamese Input Method for Chrome with Telex and VNI support. Type Vietnamese text easily with a clean, stable interface.",
 		"description": "Extension description"
 	},
 	"extAction": {
