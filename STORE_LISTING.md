@@ -25,6 +25,11 @@ Type Vietnamese text effortlessly in your browser with VNK - Vietnamese Input Me
 • Clean, modern interface
 • Free and open source
 
+### Required Permissions Explained:
+• Website Access: Required to enable Vietnamese typing in text fields across all websites
+• Storage: Only used to save your input method preferences locally
+• No personal data collection or tracking
+
 ### How to Use:
 1. Click the VNK icon to choose your preferred input method
 2. Start typing in any text field
@@ -63,6 +68,11 @@ Gõ tiếng Việt dễ dàng trên trình duyệt với VNK - Bộ gõ tiếng 
 • Hiệu năng cao và ổn định
 • Giao diện hiện đại, đơn giản
 • Miễn phí và mã nguồn mở
+
+### Giải thích quyền truy cập:
+• Truy cập website: Cần thiết để gõ tiếng Việt trong các ô nhập liệu trên mọi trang web
+• Lưu trữ: Chỉ dùng để lưu cài đặt kiểu gõ của bạn
+• Không thu thập hay theo dõi dữ liệu cá nhân
 
 ### Hướng dẫn sử dụng:
 1. Nhấp vào biểu tượng VNK để chọn kiểu gõ
