@@ -20,6 +20,17 @@ function initState() {
 		});
 }
 
+// Listen for storage changes to sync between tabs
+chrome.storage.onChanged.addListener((changes) => {
+	if (changes.avimState) {
+		const newState = changes.avimState.newValue;
+		method = newState.method;
+		active = newState.active;
+		checkSpell = newState.checkSpell;
+		initAVIM();
+	}
+});
+
 // Listen for state changes from popup/background
 chrome.runtime.onMessage.addListener((message) => {
 	if (message.type === 'stateChanged') {
@@ -32,8 +43,8 @@ chrome.runtime.onMessage.addListener((message) => {
 
 function findIgnore(el) {
 	const va = exclude || ["email"];
-	for(let i = 0; i < va.length; i++) {
-		if((va[i].length > 0) && (el.name == va[i] || el.id == va[i])) {
+	for (let i = 0; i < va.length; i++) {
+		if ((va[i].length > 0) && (el.name == va[i] || el.id == va[i])) {
 			return true;
 		}
 	}
@@ -42,28 +53,28 @@ function findIgnore(el) {
 
 // Find the nearest editable parent element
 function findEditableParent(element) {
-    let current = element;
-    while (current && current !== document.body) {
-        if (current.isContentEditable || inputTypes.includes(current.type)) {
-            return current;
-        }
-        current = current.parentElement;
-    }
-    return null;
+	let current = element;
+	while (current && current !== document.body) {
+		if (current.isContentEditable || inputTypes.includes(current.type)) {
+			return current;
+		}
+		current = current.parentElement;
+	}
+	return null;
 }
 
 // Get the text content and cursor position from a contenteditable element
 function getContentEditableInfo(element, range) {
-    const node = range.startContainer;
-    const workingElement = node.nodeType === 3 ? node.parentNode : node;
-    
-    return {
-        element: workingElement,
-        node: node,
-        text: node.textContent,
-        offset: range.startOffset,
-        fullText: workingElement.textContent
-    };
+	const node = range.startContainer;
+	const workingElement = node.nodeType === 3 ? node.parentNode : node;
+
+	return {
+		element: workingElement,
+		node: node,
+		text: node.textContent,
+		offset: range.startOffset,
+		fullText: workingElement.textContent
+	};
 }
 
 function initAVIM() {
@@ -75,10 +86,10 @@ function initAVIM() {
 	AVIMObj.method = method;
 	AVIMObj.onOff = active ? 1 : 0;
 	AVIMObj.ckSpell = checkSpell ? 1 : 0;
-	
+
 	// Always attach handlers - they will check active state when used
 	attachInputHandlers(document);
-	
+
 	// Initialize AVIM for all iframes
 	const frames = document.getElementsByTagName("iframe");
 	for (let i = 0; i < frames.length; i++) {
@@ -103,7 +114,7 @@ function attachInputHandlers(doc) {
 function removeOldAVIM() {
 	document.removeEventListener('keypress', handleKeyPress, true);
 	document.removeEventListener('keyup', handleKeyUp, true);
-	
+
 	const frames = document.getElementsByTagName("iframe");
 	for (let i = 0; i < frames.length; i++) {
 		try {
@@ -112,7 +123,7 @@ function removeOldAVIM() {
 				frameDoc.removeEventListener('keypress', handleKeyPress, true);
 				frameDoc.removeEventListener('keyup', handleKeyUp, true);
 			}
-		} catch (e) {}
+		} catch (e) { }
 	}
 }
 
@@ -125,7 +136,7 @@ function handleKeyUp(e) {
 		if (isPressCtrl && (now - lastCtrlPress) < 300) {
 			// Double Ctrl press detected
 			const newActive = !active;
-			chrome.runtime.sendMessage({ 
+			chrome.runtime.sendMessage({
 				type: 'setState',
 				active: newActive
 			}).then(() => {
@@ -145,7 +156,7 @@ function handleKeyUp(e) {
 
 function handleKeyPress(e) {
 	if (!active) return;
-	
+
 	const target = e.target;
 	if (e.ctrlKey || (e.altKey && e.which !== 92 && e.which !== 126)) {
 		return;
@@ -159,37 +170,37 @@ function handleKeyPress(e) {
 
 	// Set current key
 	AVIMObj.sk = String.fromCharCode(e.which);
-	
+
 	// Handle different types of editable elements
 	if (editableElement.isContentEditable) {
 		const selection = window.getSelection();
 		const range = selection.getRangeAt(0);
-		
+
 		// Get info about the current editable context
 		const editableInfo = getContentEditableInfo(editableElement, range);
-		
+
 		// Create a proxy object that mimics the interface AVIM expects
 		const processObj = {
 			value: editableInfo.text,
 			selectionStart: editableInfo.offset,
 			selectionEnd: editableInfo.offset,
-			setSelectionRange: function(start, end) {
+			setSelectionRange: function (start, end) {
 				this.selectionStart = start;
 				this.selectionEnd = end;
 			}
 		};
-		
+
 		// Process the keystroke
 		start(processObj, e);
-		
+
 		if (AVIMObj.changed) {
 			e.preventDefault();
 			AVIMObj.changed = false;
-			
+
 			// Update the text node
 			if (editableInfo.node.nodeType === 3) {
 				editableInfo.node.textContent = processObj.value;
-				
+
 				// Restore cursor position
 				range.setStart(editableInfo.node, processObj.selectionStart);
 				range.setEnd(editableInfo.node, processObj.selectionEnd);
@@ -200,7 +211,7 @@ function handleKeyPress(e) {
 	} else {
 		// For normal input elements, just pass through to AVIM
 		start(editableElement, e);
-		
+
 		if (AVIMObj.changed) {
 			e.preventDefault();
 			AVIMObj.changed = false;

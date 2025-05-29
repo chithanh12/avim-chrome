@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "manifest_version": 3,
   "description": "__MSG_extDescription__",
-  "author": "Nguyen Thanh (chithanh12@gmail.com)",
+  "author": "Nguyen Chi Thanh (chithanh12@gmail.com)",
   "homepage_url": "https://github.com/chithanh12/vnk-chrome",
   "icons": {
     "16": "/icons/icon16.png",
@@ -42,8 +42,7 @@
     "service_worker": "scripts/background.js"
   },
   "permissions": [
-    "storage",
-    "tabs"
+    "storage"
   ],
   "host_permissions": [
     "http://*/*",

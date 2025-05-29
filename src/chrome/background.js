@@ -37,26 +37,13 @@ async function handleStateChange(request, sendResponse) {
         if (request.active !== undefined) newState.active = request.active;
         if (request.method !== undefined) newState.method = request.method;
         if (request.checkSpell !== undefined) newState.checkSpell = request.checkSpell;
-        
-        // Save to storage
+
+        // Save to storage - this will trigger storage.onChanged in all tabs
         await chrome.storage.local.set({ avimState: newState });
         state = newState;
 
         // Update icon
         await updateIcon();
-        
-        // Notify all tabs
-        const tabs = await chrome.tabs.query({});
-        await Promise.all(tabs.map(async (tab) => {
-            try {
-                await chrome.tabs.sendMessage(tab.id, {
-                    type: 'stateChanged',
-                    ...state
-                });
-            } catch (e) {
-                // Silent fail for tabs that don't have our content script
-            }
-        }));
 
         sendResponse(state);
     } catch (e) {
@@ -83,6 +70,14 @@ async function updateIcon() {
         // Silent fail
     }
 }
+
+// Listen for storage changes to keep background state in sync
+chrome.storage.onChanged.addListener((changes) => {
+    if (changes.avimState) {
+        state = changes.avimState.newValue;
+        updateIcon();
+    }
+});
 
 // Initialize state when service worker starts
 initializeState();
