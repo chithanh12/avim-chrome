@@ -34,7 +34,7 @@
     "gulp-strip-debug": "^5.0.0",
     "gulp-terser": "^2.1.0",
     "gulp-uglify": "^3.0.2",
-    "gulp-zip": "^5.1.0",
+    "gulp-zip": "^6.1.0",
     "jshint": "^2.13.6"
   },
   "dependencies": {

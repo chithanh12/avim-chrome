@@ -12,12 +12,14 @@ const uglify = require('gulp-uglify');
 const concat = require('gulp-concat');
 const jasmine = require('gulp-jasmine');
 const jeditor = require('gulp-json-editor');
-const zip = require('gulp-zip');
+const zip = require('gulp-zip').default;
 const terser = require('gulp-terser');
 const babel = require('gulp-babel');
 const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
+const { buffer } = require('stream/consumers');
+const { exec } = require('child_process');
 
 // Clean build directory
 function clean() {
@@ -97,13 +99,26 @@ function styles() {
 		.pipe(dest('build/styles'));
 }
 
-// Package extension
-function packageExtension() {
+// Package extension using native zip command to avoid binary file corruption
+function packageExtension(cb) {
 	const manifest = require('./src/manifest.json');
 	const distFileName = `vnk-chrome-${manifest.version}.zip`;
-	return src('build/**/*')
-		.pipe(zip(distFileName))
-		.pipe(dest('dist'));
+
+	// Ensure dist directory exists
+	if (!fs.existsSync('dist')) {
+		fs.mkdirSync('dist', { recursive: true });
+	}
+
+	// Use native zip command to avoid gulp-zip binary corruption issues
+	exec(`cd build && zip -r ../dist/${distFileName} .`, (err, stdout, stderr) => {
+		if (err) {
+			console.error('Error creating zip:', err);
+			cb(err);
+		} else {
+			console.log(`Successfully created dist/${distFileName}`);
+			cb();
+		}
+	});
 }
 
 // Copy icons separately using direct fs operations to preserve binary files
